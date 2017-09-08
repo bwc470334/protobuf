@@ -334,6 +334,7 @@ void ImmutableMessageGenerator::Generate(io::Printer* printer) {
         name_resolver_->GetImmutableClassName(descriptor_),
         GeneratedCodeVersionSuffix());
   } else {
+    printer->Print("@SuppressWarnings(\"unused\")\n");
     printer->Print(
         variables,
         "$deprecation$public $static$final class $classname$ extends\n");
@@ -341,7 +342,7 @@ void ImmutableMessageGenerator::Generate(io::Printer* printer) {
     printer->Print(variables,
       "    com.google.protobuf.GeneratedMessage$ver$ implements\n"
       "    $extra_interfaces$\n"
-      "    $classname$OrBuilder {\n");
+      "    $classname$OrBuilder, IMessage {\n");
     builder_type = strings::Substitute(
         "com.google.protobuf.GeneratedMessage$0.Builder<?>",
         GeneratedCodeVersionSuffix());
@@ -377,6 +378,22 @@ void ImmutableMessageGenerator::Generate(io::Printer* printer) {
     "getUnknownFields() {\n"
     "  return this.unknownFields;\n"
     "}\n");
+
+  printer->Print(
+    "//DO NOT EDIT THIS LINE BEGIN\n"
+    "@java.lang.Override\n"
+    "public void\n"
+    "process(io.netty.channel.ChannelHandlerContext ctx) {\n"
+    "  //TODO EDIT YOUR CODE HERE\n"
+    "}\n"
+    "//DO NOT EDIT THIS LINE END\n");
+
+/*     printer->Print(
+      "@java.lang.Override\n"
+      "public IMessage\n"
+      "parse(byte[] data) {\n"
+      "  return parse(data);"
+      "}\n"); */
 
   if (context_->HasGeneratedMethods(descriptor_)) {
     GenerateParsingConstructor(printer);
@@ -1086,6 +1103,7 @@ GenerateEqualsAndHashCode(io::Printer* printer) {
     "\n");
 
   printer->Print(
+    "@SuppressWarnings(\"unchecked\")\n"
     "@java.lang.Override\n"
     "public int hashCode() {\n");
   printer->Indent();
